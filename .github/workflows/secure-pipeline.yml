@@ -1,4 +1,6 @@
 name: SecureBank CI
+permissions:
+  contents: read
 
 on:
   push:

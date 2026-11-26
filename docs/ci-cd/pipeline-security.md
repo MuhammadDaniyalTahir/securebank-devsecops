@@ -91,3 +91,51 @@ When updating an action, we should:
 5. Execute the CI pipeline and confirm successful operation.
 
 This approach balances dependency integrity with the need to receive security updates.
+
+## 3. Least-Privilege GitHub Actions Permissions
+
+### 3.1 Security Objective
+
+The purpose of applying this control is to ensure that the workflow only have necessary permissions to perform it's tasks. Giving additional permissions to code or workflow will increase the chances of threats and cyber attacks.
+
+### 3.2 Threat Analysis
+
+Currently my workflow configuration has `contents: read` permission because it only have to download source code from github repo and install dependencies and python setup. It means that API token is not able to write any changes in the repository. It don't require any other permission yet. But if I give it additional permission of `write-all` then it will increase the chances of following threats.
+
+#### 3.2.1 Modify repository content
+
+If compromised then attacker can modify the repo code because of providing additional permission.
+
+#### 3.2.2 Push unauthorized commits
+
+If compromised then attacker can push unauthorized commits and execute that malicious code as well.
+
+#### 3.2.3 Modify branches or create release
+
+If compromised then attacker can modify the repo and you will lose your original work if not saved locally.
+
+### 3.3 Permission scoping
+
+In a case where additonal permission is required to a job, only give that task required permission that is called **permission scoping**. Because there are two types of permissions.
+
+#### 1. Workflow-level permission
+It is the default permission for all jobs. Don't give unnecessary additional permission the whole workflow, because it will be harmful because it will increase the **blast radius** if compromised.
+
+##### 2. Job-level permission
+It is permission for a specific job. Only the job will recieve the additional permission that requires those permissions because job-level permissions overrides the workflow-level permissions. It will ensure the reduction in blast radius. 
+
+### 3.4 Implementation
+
+Our current workflow uses workflow-level permissions:
+
+```yaml
+permissions:
+  contents: read
+```
+This permission is sufficient for the current CI workflow because it only needs to access repository contents to check out the source code and execute automated tests.
+
+No additional repository write or package publishing permissions are currently required.
+
+### 3.5 Verification
+
+After explicitly mentioning this in the workflow, I pushed the code in main branch so that workflow will get executed and it must be verified that our permission is working perfectly and not restricting any required action.

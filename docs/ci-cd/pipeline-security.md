@@ -139,3 +139,51 @@ No additional repository write or package publishing permissions are currently r
 ### 3.5 Verification
 
 After explicitly mentioning this in the workflow, I pushed the code in main branch so that workflow will get executed and it must be verified that our permission is working perfectly and not restricting any required action.
+
+## 4. Preventing Unnecessary Credential Persistence
+
+### 4.1 Security Objective
+
+The purpose of this security control is to prevent the GitHub token used by the checkout action from being persisted in the repository's local Git configuration. Subsequent workflow steps do not require this credential, so preventing its persistence reduces unnecessary credential exposure.
+
+### 4.2 Threat Analysis
+
+#### 4.2.1 Data exposure
+
+It will cause different threats. It can execute the malicious code that can be used for many purposes. One of the main harmful intent is to download the content of private repository to external server. 
+
+#### 4.2.2 Modify repository content
+
+It can modify the repository files and content if respective permissions are given in the workflow. It needs write permissions for workflow to modify the repositry content but in our case we only have `read` permission so that's not possible in our case.
+
+#### 4.2.3 Other system compromise
+
+It will try to compromise the other systems in the same environment where runner exists.
+
+#### 4.2.4 External communication
+
+It will try to communicate with external servers if network allows it to do. That will be harmful for exposing the secrets as well as downloading the malicous code, exploits and continuous communication with attacker's server can also be established.
+
+### 4.3 Implementation
+
+I have implemented security control that credentials must not persist in the workflow when they are used in the following way:
+
+``` yml 
+with:
+  persist-credentials: false
+```
+
+This setting prevents the token from being persisted in the local git configuration so that it's unavailable to subsequent steps.
+
+### 4.4 Verification
+
+I have pushed this updated workflow and github actions run successfully without any hurdle. 
+
+### 4.5 Limitations
+
+This control reduces credential exposure but does not make the workflow immune to other security threats.
+
+- It does not prevent malicious code execution.
+- It does not isolate workflow steps.
+- It does not protect other credentials or sensitive files accessible to the runner.
+- It does not prevent network-based data exfiltration.

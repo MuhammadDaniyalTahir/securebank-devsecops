@@ -13,6 +13,7 @@ Detailed implementation decisions, security rationale, and verification evidence
 | SC-001 | Least-privilege GitHub Actions permissions | CI/CD Security | Verified | [GitHub Actions](../ci-cd/github-actions.md) |
 | SC-002 | Immutable GitHub Actions references using commit SHA pinning | Supply Chain Security | Verified | [Pipeline Security](../ci-cd/pipeline-security.md#2-immutable-github-actions-references) |
 | SC-003 | Prevent unnecessary GitHub Actions credential persistence | CI/CD Security | Verified | [Pipeline Security](../ci-cd/pipeline-security.md#4-preventing-unnecessary-credential-persistence) |
+| SC-004 | Reproducible, Hash-verified Python dependency management | Supply Chain Security | Verified | [Pipeline Security](dependency-management.md) |
 
 ## 3. Status Definitions
 
